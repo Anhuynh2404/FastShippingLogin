@@ -75,17 +75,28 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.fastshippinglogin.Model.User
+import com.example.fastshippinglogin.View.MainContent
 
 class MainActivity : ComponentActivity() {
     private val auth: FirebaseAuth by lazy { Firebase.auth }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AppContent(auth = auth)
-
+           // AppContent(auth = auth)
+            MainTheme {
+                MainContent()
+            }
         }
     }
 
+    @Composable
+    fun MainTheme(content: @Composable () -> Unit){
+        FastShippingLoginTheme {
+            Surface(color = MaterialTheme.colorScheme.background) {
+                content()
+            }
+        }
+    }
     @Composable
     fun AppContent(auth: FirebaseAuth) {
         var showSplashScreen by remember { mutableStateOf(true) }
