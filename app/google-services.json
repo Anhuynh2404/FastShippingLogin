@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "545787727522",
+    "project_id": "fastshippinglogin",
+    "storage_bucket": "fastshippinglogin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:545787727522:android:417271f6270be59fb5d1fb",
+        "android_client_info": {
+          "package_name": "com.example.fastshippinglogin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXJkmECPooG-5n6xcIkhl5XydhPmee6-M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
