@@ -82,10 +82,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-           // AppContent(auth = auth)
-            MainTheme {
-                MainContent()
-            }
+           AppContent(auth = auth)
         }
     }
 
@@ -167,13 +164,18 @@ class MainActivity : ComponentActivity() {
                 }
             )
         } else {
-            MainScreen(
-                user = user!!,  // Pass the user information to MainScreen
-                onSignOut = {
-                    auth.signOut()
-                    user = null
-                }
-            )
+//            MainScreen(
+//                user = user!!,  // Pass the user information to MainScreen
+//                onSignOut = {
+//                    auth.signOut()
+//                    user = null
+//                }
+//            )
+            MainTheme {
+                MainContent(
+                    user = user!!
+                )
+            }
         }
     }
 
@@ -413,31 +415,33 @@ class MainActivity : ComponentActivity() {
 
                 }
         }
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            userProfile.value?.let {
-                Text("Welcome, ${it.firstName} ${it.lastName}!")
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick = {
-                    onSignOut()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-            ) {
-                Text("Sign Out")
-            }
-        }
+//        MainTheme {
+//            MainContent()
+//        }
+//        Column(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(16.dp),
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            verticalArrangement = Arrangement.Center
+//        ) {
+//            userProfile.value?.let {
+//                Text("Welcome, ${it.firstName} ${it.lastName}!")
+//            }
+//
+//            Spacer(modifier = Modifier.height(16.dp))
+//
+//            Button(
+//                onClick = {
+//                    onSignOut()
+//                },
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(50.dp)
+//            ) {
+//                Text("Sign Out")
+//            }
+//        }
     }
 
     private fun signIn(
