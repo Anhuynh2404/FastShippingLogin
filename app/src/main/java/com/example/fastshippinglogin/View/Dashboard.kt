@@ -211,7 +211,7 @@ fun MyBottomBar(){
     ) {
         bottomMenuItemList.forEachIndexed { index, bottomMenuItem ->
             if (index == 2){
-                BottomNavigationItem
+                //BottomNavigationItem
             }
         }
     }
