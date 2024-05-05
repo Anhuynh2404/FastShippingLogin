@@ -15,6 +15,8 @@ val nunitoFamily = FontFamily(
     Font(R.font.nunito_regular, FontWeight.Medium),
     Font(R.font.nunito_bold, FontWeight.Bold)
 )
+val ReemKufi = FontFamily(Font(R.font.reemkufi))
+val Poppins = FontFamily(Font(R.font.poppins))
 // Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(
