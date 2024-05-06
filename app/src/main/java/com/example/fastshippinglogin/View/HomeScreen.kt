@@ -28,18 +28,13 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -61,7 +56,6 @@ import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import com.example.fastshippinglogin.Model.User
-import com.example.fastshippinglogin.ui.theme.FastShippingLoginTheme
 import com.example.fastshippinglogin.R
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -155,9 +149,11 @@ fun Content(firstName: String) {
     Column() {
       Header()
         Spacer(modifier = Modifier.height(16.dp))
-      Promotions(firstName)
+        Promotions(firstName)
         Spacer(modifier = Modifier.height(16.dp))
         ServiceSection()
+        Spacer(modifier = Modifier.height(16.dp))
+        BestSellerSection()
         Spacer(modifier = Modifier.height(16.dp))
         BestSellerSection()
     }

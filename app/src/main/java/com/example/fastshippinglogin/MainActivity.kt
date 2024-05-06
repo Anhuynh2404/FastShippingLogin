@@ -8,33 +8,10 @@ import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,35 +26,15 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.fastshippinglogin.ui.theme.FastShippingLoginTheme
-import com.google.firebase.auth.auth
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import com.example.fastshippinglogin.Model.User
 import com.example.fastshippinglogin.View.AuthScreen
-import com.example.fastshippinglogin.View.DashboardHome
-import com.example.fastshippinglogin.View.MainContent
 
 class MainActivity : ComponentActivity() {
     private val auth: FirebaseAuth by lazy { Firebase.auth }
@@ -85,20 +42,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
            AppContent(auth = auth)
-//            MainTheme {
-//                DashboardHome()
-//            }
         }
     }
 
-    @Composable
-    fun MainTheme(content: @Composable () -> Unit){
-        FastShippingLoginTheme {
-            Surface(color = MaterialTheme.colorScheme.background) {
-                content()
-            }
-        }
-    }
+
     @Composable
     fun AppContent(auth: FirebaseAuth) {
         var showSplashScreen by remember { mutableStateOf(true) }
@@ -167,6 +114,7 @@ class MainActivity : ComponentActivity() {
                 }
             )
         } else {
+            OrderFoodApp(user!!)
 //            MainScreen(
 //                user = user!!,  // Pass the user information to MainScreen
 //                onSignOut = {
@@ -175,18 +123,8 @@ class MainActivity : ComponentActivity() {
 //                }
 //            )
 
-//            MainTheme {
-//                MainContent(
-//                    user = user!!
-//                )
-//            }
-            AuthScreen(
-                onSignedIn = { signedInUser ->
-                    user = signedInUser
-                }
-            )
+            }
         }
-    }
 
     @Composable
     fun MainScreen(user: FirebaseUser, onSignOut: () -> Unit) {
@@ -240,18 +178,5 @@ class MainActivity : ComponentActivity() {
 //                Text("Sign Out")
 //            }
 //        }
-    }
-
-
-
-
-
-    @Preview(showBackground = true)
-    @Composable
-    fun PreviewAuthOrMainScreen() {
-        AuthScreen(
-            onSignedIn = {
-            }
-        )
     }
 }
