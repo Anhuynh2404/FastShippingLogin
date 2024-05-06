@@ -6,7 +6,9 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun AccountView(){
-    Box(){
+    Box(
+
+    ){
         Text(text = "Account")
     }
 }

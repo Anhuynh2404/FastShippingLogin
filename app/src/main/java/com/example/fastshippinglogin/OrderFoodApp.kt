@@ -26,6 +26,7 @@ import com.example.fastshippinglogin.View.MainContent
 import com.example.fastshippinglogin.View.SettingsScreen
 import com.google.firebase.auth.FirebaseUser
 import com.example.fastshippinglogin.View.MyBottomAppBar
+import com.example.fastshippinglogin.View.OrderScreen
 
 enum class AppScreen(@StringRes val title: Int) {
     Start(title = R.string.app_name),
@@ -83,7 +84,7 @@ fun OrderFoodApp(
                // ScreenB()
             }
             composable(route = "Order") { // Chỉ định route cho ScreenA
-               // ScreenC()
+               OrderScreen()
             }
             composable(route = "Profile") { // Chỉ định route cho ScreenB
                 SettingsScreen()
