@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.fastshippinglogin.Model.BottomMenuItem
 import com.example.fastshippinglogin.R
 
 @Composable
@@ -24,25 +25,25 @@ private fun prepareBottomMenu(): List<BottomMenuItem>{
 
     bottomMenuItemList.add(
         BottomMenuItem(
-            lable = "Home",
+            label = "Home",
             icon = painterResource(id = R.drawable.home_icon)
         )
     )
     bottomMenuItemList.add(
         BottomMenuItem(
-            lable = "Feed back",
+            label = "FeedBack",
             icon = painterResource(id = R.drawable.feed_back_icon)
         )
     )
     bottomMenuItemList.add(
         BottomMenuItem(
-            lable = "Order",
+            label = "Order",
             icon = painterResource(id = R.drawable.order_icon)
         )
     )
     bottomMenuItemList.add(
         BottomMenuItem(
-            lable = "Profile",
+            label = "Profile",
             icon = painterResource(id = R.drawable.profile_icon)
         )
     )
@@ -72,14 +73,14 @@ fun MyBottomAppBar(navController: NavController){
             }
 
             BottomNavigationItem(
-                selected = (selectedItem == bottomMenuItem.lable),
+                selected = (selectedItem == bottomMenuItem.label),
                 onClick = {
-                          selectedItem = bottomMenuItem.lable
-                        Toast.makeText(contextForToast,bottomMenuItem.lable, Toast.LENGTH_LONG
+                          selectedItem = bottomMenuItem.label
+                        Toast.makeText(contextForToast,bottomMenuItem.label, Toast.LENGTH_LONG
                         ).show()
-                    when (bottomMenuItem.lable) {
+                    when (bottomMenuItem.label) {
                         "Home" -> navController.navigate("Home")
-                        "Feed Back" -> navController.navigate("FeedBack")
+                        "FeedBack" -> navController.navigate("FeedBack")
                         "Order" -> navController.navigate("Order")
                         "Profile" -> navController.navigate("Profile")
                     }
@@ -87,7 +88,7 @@ fun MyBottomAppBar(navController: NavController){
                 icon = {
                     Icon(
                         painter = bottomMenuItem.icon,
-                        contentDescription = bottomMenuItem.lable,
+                        contentDescription = bottomMenuItem.label,
                         modifier = Modifier
                             .height(30.dp)
                             .width(30.dp)

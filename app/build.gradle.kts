@@ -48,6 +48,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
 
 dependencies {
@@ -65,9 +66,12 @@ dependencies {
     implementation("androidx.compose.material:material:1.6.7")
     implementation("androidx.compose.material3:material3")
 
+    implementation(platform("com.google.firebase:firebase-bom:32.1.1"))
     implementation("com.google.firebase:firebase-auth:22.3.1")
     implementation("com.google.firebase:firebase-database:20.3.1")
     implementation("com.google.firebase:firebase-firestore:24.11.1")
+    implementation ("io.coil-kt:coil:1.3.2")
+    //implementation("com.google.firebase:firebase-storage:21.0.0")
 
 
     testImplementation("junit:junit:4.13.2")
@@ -80,6 +84,10 @@ dependencies {
 
     implementation ("io.coil-kt:coil-compose:2.2.2")
     implementation ("io.coil-kt:coil-gif:2.2.2")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.0.5")
+
+    implementation ("androidx.appcompat:appcompat:1.3.1")
+
 
 
 }

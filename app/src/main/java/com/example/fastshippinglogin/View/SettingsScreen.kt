@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -21,7 +22,21 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.lightColors
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,43 +47,67 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.fastshippinglogin.Model.User
 import com.example.fastshippinglogin.ui.theme.Poppins
 import com.example.fastshippinglogin.ui.theme.PrimaryColor
 import com.example.fastshippinglogin.ui.theme.SecondaryColor
 import com.example.fastshippinglogin.ui.theme.Shapes
 import com.example.fastshippinglogin.R
+import com.example.fastshippinglogin.View.components.OrderTab
+import com.example.fastshippinglogin.View.settingview.account.EditProfileScreen
 import com.example.fastshippinglogin.ui.theme.LightPrimaryColor
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
+
 
 @ExperimentalMaterialApi
 @Composable
-fun SettingsScreen() {
-    Box(Modifier.verticalScroll(rememberScrollState())) {
-        Column() {
-            HeaderText()
-            ProfileCardUI()
-            GeneralOptionsUI()
-            SupportOptionsUI()
+fun SettingsScreen(
+    navController: NavHostController = rememberNavController(),
+    user: User,
+) {
+    val eUser by remember { mutableStateOf(user) }
+    val email = eUser.email
+    val imgUrl = eUser.imageUrl
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    androidx.compose.material.Text(
+                        text = "Cài đặt",
+                        fontFamily = Poppins,
+                        color = MaterialTheme.colors.primaryVariant,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 16.sp
+                    )
+                },
+            )
+        }
+    ) {
+        Box(Modifier.verticalScroll(rememberScrollState()).padding(it)) {
+            Column() {
+                ProfileCardUI(navController = navController, email)
+                GeneralOptionsUI()
+                SupportOptionsUI()
+            }
         }
     }
 }
 
 @Composable
-fun HeaderText() {
-    androidx.compose.material.Text(
-        text = "Cài đặt",
-        fontFamily = Poppins,
-        color = SecondaryColor,
-        textAlign = TextAlign.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 30.dp, bottom = 10.dp),
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 16.sp
-    )
-}
-
-@Composable
-fun ProfileCardUI() {
+fun ProfileCardUI(
+    navController: NavHostController,
+    email : String
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -84,7 +123,7 @@ fun ProfileCardUI() {
         ) {
             Column() {
                 androidx.compose.material.Text(
-                    text = "Check Your Profile",
+                    text = "Kiểm tra tài khoản",
                     fontFamily = Poppins,
                     color = SecondaryColor,
                     fontSize = 16.sp,
@@ -92,41 +131,43 @@ fun ProfileCardUI() {
                 )
 
                 androidx.compose.material.Text(
-                    text = "UI.Stack.YT@gmail.com",
+                    text = email,
                     fontFamily = Poppins,
                     color = Color.Gray,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.SemiBold,
                 )
 
-                Button(
-                    modifier = Modifier.padding(top = 10.dp),
-                    onClick = {},
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = PrimaryColor
-                    ),
-                    contentPadding = PaddingValues(horizontal = 30.dp),
-                    elevation = ButtonDefaults.elevation(
-                        defaultElevation = 0.dp,
-                        pressedElevation = 2.dp
-                    ),
-                    shape = Shapes.medium
-                ) {
-                    androidx.compose.material.Text(
-                        text = "Xem chi tiết",
-                        fontFamily = Poppins,
-                        color = SecondaryColor,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Button(
+                        modifier = Modifier.padding(top = 10.dp),
+                        onClick = {
+                            navController.navigate("ViewProfile")
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = PrimaryColor
+                        ),
+                        contentPadding = PaddingValues(horizontal = 30.dp),
+                        elevation = ButtonDefaults.elevation(
+                            defaultElevation = 0.dp,
+                            pressedElevation = 2.dp
+                        ),
+                        shape = Shapes.medium
+                    ) {
+                        androidx.compose.material.Text(
+                            text = "Xem chi tiết",
+                            fontFamily = Poppins,
+                            color = SecondaryColor,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
+                Image(
+                    painter = painterResource(id = R.drawable.ic_launcher_background),
+                    contentDescription = "",
+                    modifier = Modifier.height(120.dp)
+                )
             }
-            Image(
-                painter = painterResource(id = R.drawable.ic_launcher_background),
-                contentDescription = "",
-                modifier = Modifier.height(120.dp)
-            )
-        }
     }
 }
 
@@ -151,7 +192,8 @@ fun GeneralOptionsUI() {
         GeneralSettingItem(
             icon = R.drawable.ic_launcher_background,
             mainText = stringResource(id = R.string.notification),
-            onClick = {}
+            onClick = {
+            }
         )
         GeneralSettingItem(
             icon = R.drawable.img_login,
@@ -184,7 +226,7 @@ fun GeneralOptionsUI() {
 
 @ExperimentalMaterialApi
 @Composable
-fun GeneralSettingItem(icon: Int, mainText: String, onClick: () -> Unit) {
+private fun GeneralSettingItem(icon: Int, mainText: String, onClick: () -> Unit) {
     Card(
         onClick = { onClick() },
         backgroundColor = Color.White,
@@ -334,6 +376,63 @@ fun SupportItem(icon: Int, mainText: String, onClick: () -> Unit) {
                 modifier = Modifier.size(16.dp)
             )
 
+        }
+    }
+}
+
+//@Composable
+//fun NavigateToMainScreen(user: FirebaseUser?, onSignOut: () -> Unit) {
+//    MainScreen(user = user, onSignOut = onSignOut)
+//}
+
+
+@Composable
+fun MainScreen(user: FirebaseUser?, onSignOut: () -> Unit) {
+    val userProfile = remember { mutableStateOf<User?>(null) }
+
+    if (user != null) {
+        LaunchedEffect(user.uid) {
+            val firestore = FirebaseFirestore.getInstance()
+            val userDocRef = firestore.collection("users").document(user.uid)
+            userDocRef.get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val firstName = document.getString("firstName")
+                        val lastName = document.getString("lastName")
+
+                        userProfile.value = User(firstName, lastName, user.email ?: "")
+                    } else {
+                        // Handle the case where the document doesn't exist
+                    }
+                }
+                .addOnFailureListener { e ->
+                    // Handle failure
+                }
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        userProfile.value?.let {
+            Text("Welcome, ${it.firstName} ${it.lastName}!")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        androidx.compose.material3.Button(
+            onClick = {
+                onSignOut()
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+        ) {
+            Text("Sign Out")
         }
     }
 }

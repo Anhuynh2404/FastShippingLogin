@@ -80,13 +80,8 @@ fun MainContent(user: FirebaseUser){
             }
             .addOnFailureListener { e ->
                 // Handle failure
-
             }
     }
-//    userProfile.value?.let {
-//        val firstName = it.firstName
-//        //Text("Welcome, ${it.firstName} ${it.lastName}!")
-//    }
     Box(Modifier.verticalScroll(rememberScrollState())) {
         Image(
             modifier = Modifier

@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
@@ -49,16 +51,18 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.fastshippinglogin.Controller.signIn
-import com.example.fastshippinglogin.Controller.signUp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fastshippinglogin.viewmodel.signIn
+import com.example.fastshippinglogin.viewmodel.signUp
 import com.example.fastshippinglogin.R
+import com.example.fastshippinglogin.viewmodel.account.UserProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 @Composable
-fun AuthScreen(onSignedIn: (FirebaseUser) -> Unit) {
+fun AuthScreen(onSignedIn: (FirebaseUser) -> Unit, userProfileViewModel: UserProfileViewModel = viewModel()) {
     val auth: FirebaseAuth by lazy { Firebase.auth }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -74,10 +78,12 @@ fun AuthScreen(onSignedIn: (FirebaseUser) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .paint(
                 painterResource(id = R.drawable.bg_main_login),
                 contentScale = ContentScale.FillBounds
             )
+
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -87,7 +93,7 @@ fun AuthScreen(onSignedIn: (FirebaseUser) -> Unit) {
             Image(
                 painter = painterResource(id = R.drawable.img_login),
                 contentDescription = "Img_logo_Login",
-                modifier = Modifier.size(200.dp)
+                modifier = Modifier.size(150.dp)
             )
             if(isSignIn){
                 Text(
@@ -97,7 +103,7 @@ fun AuthScreen(onSignedIn: (FirebaseUser) -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Text(
-                    text = "Đăng nhập với tài khoán của bạn ",
+                    text = "Đăng nhập với tài khoản của bạn ",
                     fontWeight = FontWeight.Bold,
                     color = Color.DarkGray
                 )
@@ -290,7 +296,7 @@ fun AuthScreen(onSignedIn: (FirebaseUser) -> Unit) {
                         .clickable {
                     }
                         .weight(1f)
-                        .padding(start = 100 .dp, end = 40 .dp),
+                     .padding(start = 80 .dp, end = 40 .dp),
                 )
                 Image(
                     painter = painterResource(id = R.drawable.google),
@@ -299,7 +305,7 @@ fun AuthScreen(onSignedIn: (FirebaseUser) -> Unit) {
 
                     }
                         .weight(1f)
-                        .padding(start = 40 .dp, end = 100 .dp),
+                     .padding(start = 40 .dp, end = 80 .dp),
                 )
             }
 

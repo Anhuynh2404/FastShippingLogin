@@ -1,7 +1,7 @@
 package com.example.fastshippinglogin.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.fastshippinglogin.data.User
+import com.example.fastshippinglogin.Model.User
 import com.example.fastshippinglogin.util.Resource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser

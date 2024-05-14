@@ -35,13 +35,16 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
 import com.example.fastshippinglogin.Model.User
 import com.example.fastshippinglogin.View.AuthScreen
+import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
     private val auth: FirebaseAuth by lazy { Firebase.auth }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         setContent {
            AppContent(auth = auth)
+
         }
     }
 

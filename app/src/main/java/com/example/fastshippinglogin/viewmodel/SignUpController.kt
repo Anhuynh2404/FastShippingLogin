@@ -1,5 +1,6 @@
-package com.example.fastshippinglogin.Controller
+package com.example.fastshippinglogin.viewmodel
 
+import com.example.fastshippinglogin.Model.UserProfile
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -16,8 +17,6 @@ fun signUp(
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val user = auth.currentUser
-
-                // Create a user profile in Firestore
                 val userProfile = hashMapOf(
                     "firstName" to firstName,
                     "lastName" to lastName,
@@ -37,7 +36,6 @@ fun signUp(
                     }
             } else {
                 // Handle sign-up failure
-
             }
         }
 }

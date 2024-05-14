@@ -1,4 +1,4 @@
-package com.example.fastshippinglogin.Controller
+package com.example.fastshippinglogin.viewmodel
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
