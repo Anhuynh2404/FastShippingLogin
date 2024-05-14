@@ -57,7 +57,6 @@ import com.example.fastshippinglogin.ui.theme.PrimaryColor
 import com.example.fastshippinglogin.ui.theme.Purple700
 import com.example.fastshippinglogin.viewmodel.OrderViewModel
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -100,38 +99,38 @@ fun OrderAppBar(
 
 
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun OrderListScreen(viewModel: OrderViewModel = viewModel()) {
-    val orders by viewModel.orders.observeAsState(emptyList())
-
-    Scaffold(
-        content = {
-            LazyColumn(
-            ){
-                items(orders) { order ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        //elevation = 8.dp
-                    ){
-                        androidx.compose.material.Text(
-                            text = order.toString(),
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-                }
-            }
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { /* navigate to add order screen */ }) {
-                Icon(Icons.Filled.Add, contentDescription = "Add Order")
-            }
-        }
-    )
-}
+//@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun OrderListScreen(viewModel: OrderViewModel = viewModel()) {
+//    val orders by viewModel.orders.observeAsState(emptyList())
+//
+//    Scaffold(
+//        content = {
+//            LazyColumn(
+//            ){
+//                items(orders) { order ->
+//                    Card(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(8.dp),
+//                        //elevation = 8.dp
+//                    ){
+//                        androidx.compose.material.Text(
+//                            text = order.toString(),
+//                            modifier = Modifier.padding(8.dp)
+//                        )
+//                    }
+//                }
+//            }
+//        },
+//        floatingActionButton = {
+//            FloatingActionButton(onClick = { /* navigate to add order screen */ }) {
+//                Icon(Icons.Filled.Add, contentDescription = "Add Order")
+//            }
+//        }
+//    )
+//}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)

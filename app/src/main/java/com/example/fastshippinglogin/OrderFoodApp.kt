@@ -27,12 +27,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.fastshippinglogin.Model.User
 import com.example.fastshippinglogin.View.AuthScreen
-import com.example.fastshippinglogin.View.FoodApp
 import com.example.fastshippinglogin.View.MainContent
 import com.example.fastshippinglogin.View.SettingsScreen
 import com.google.firebase.auth.FirebaseUser
 import com.example.fastshippinglogin.View.MyBottomAppBar
 import com.example.fastshippinglogin.View.ProfileHome
+import com.example.fastshippinglogin.View.cartview.CartScreen
 import com.example.fastshippinglogin.View.components.OrderTab
 import com.example.fastshippinglogin.View.settingview.account.EditProfileScreen
 import com.example.fastshippinglogin.View.productView.RestaurantDetailScreen
@@ -129,7 +129,8 @@ fun OrderFoodApp(
                 }
             }
             composable(route = "Cart") { // Chỉ định route cho ScreenB
-                FoodApp()
+               //FoodApp()
+                CartScreen(navController)
             }
             composable(route = "ViewProfile") { // Chỉ định route cho ScreenB
                 userProfile.value?.let { users ->

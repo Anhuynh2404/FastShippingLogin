@@ -1,5 +1,6 @@
 package com.example.fastshippinglogin.View.productView.product
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -45,28 +46,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
+import com.example.fastshippinglogin.Model.CartItem
 import com.example.fastshippinglogin.Model.Product
 import com.example.fastshippinglogin.View.productView.RestaurantInfo
+import com.example.fastshippinglogin.viewmodel.cart.CartViewModel
 import com.example.fastshippinglogin.viewmodel.restaurant.RestaurantViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun ProductDetailScreen(navController: NavHostController, productId: String?, viewModel: RestaurantViewModel= viewModel()) {
+fun ProductDetailScreen(navController: NavHostController, productId: String?, viewModel: RestaurantViewModel = viewModel(), cartViewModel: CartViewModel = viewModel()) {
     val product by viewModel.product.collectAsState()
 
     LaunchedEffect(productId) {
-        viewModel.getProductById(productId ?: "")
+        if (productId != null && productId.isNotEmpty()) {
+            Log.d("ProductDetailScreen", "ProductId: $productId")
+            viewModel.getProductById(productId)
+        } else {
+            Log.e("ProductDetailScreen", "Invalid ProductId: $productId")
+        }
     }
-
-    val productImages = listOf(
-        "", // URL of the first product image
-        "", // URL of the second product image
-        ""  // URL of the third product image
-    )
-    val reviews = listOf(
-        "Great product!",
-        "Loved it!",
-        "Would buy again."
-    )
 
     Scaffold(
         topBar = {
@@ -87,7 +85,22 @@ fun ProductDetailScreen(navController: NavHostController, productId: String?, vi
             )
         },
         bottomBar = {
-            product?.let {BottomBar( it.moneyProduct)}
+            product?.let {
+                BottomBar(
+                    product = it,
+                    onAddToCart = { quantity ->
+                        val cartItem = CartItem(
+                            productId = it.id,
+                            name = it.nameProduct,
+                            price = it.moneyProduct,
+                            imageUrl = it.imgProduct,
+                            quantity = quantity,
+                            userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+                        )
+                        cartViewModel.addToCart(cartItem)
+                    }
+                )
+            }
         }
     ) { innerPadding ->
         Column(
@@ -95,7 +108,7 @@ fun ProductDetailScreen(navController: NavHostController, productId: String?, vi
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            product?.let {food->
+            product?.let { food ->
                 ProductInfor(food)
             } ?: run {
                 Text(text = "Loading...", modifier = Modifier.padding(16.dp))
@@ -103,8 +116,9 @@ fun ProductDetailScreen(navController: NavHostController, productId: String?, vi
         }
     }
 }
+
 @Composable
-fun ProductInfor(product: Product){
+fun ProductInfor(product: Product) {
     Column {
         Image(
             painter = rememberImagePainter(data = product.imgProduct),
@@ -140,45 +154,13 @@ fun ProductInfor(product: Product){
             Spacer(modifier = Modifier.width(16.dp))
             Text(text = "1000 đơn đã mua")
         }
-
-//        LazyRow(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(vertical = 16.dp),
-//            horizontalArrangement = Arrangement.spacedBy(8.dp)
-//        ) {
-//            items(productImages) { imageUrl ->
-//                Image(
-//                    painter = rememberImagePainter(data = imageUrl),
-//                    contentDescription = "Ảnh sản phẩm",
-//                    modifier = Modifier
-//                        .size(100.dp)
-//                        .padding(horizontal = 8.dp)
-//                )
-//            }
-//        }
     }
 }
 
 @Composable
-fun ProductFeedback(reviews: List<String>){
-    Text(
-        text = "Bình luận và đánh giá",
-        style = MaterialTheme.typography.h6,
-        modifier = Modifier.padding(16.dp)
-    )
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp)
-    ) {
-        reviews.forEach { review ->
-            Text(text = review, modifier = Modifier.padding(vertical = 4.dp))
-        }
-    }
-}
-@Composable
-fun BottomBar(price: String) {
+fun BottomBar(product: Product, onAddToCart: (Int) -> Unit) {
     var quantity by remember { mutableStateOf(1) }
-    val totalPrice = (quantity * price.toInt()).toString()
+   //val totalPrice = (quantity * price.toInt()).toString()
 
     Row(
         modifier = Modifier
@@ -198,23 +180,26 @@ fun BottomBar(price: String) {
                     if (quantity > 1) quantity--
                 }
             )
-            Text(text = quantity.toString(), fontSize = 18.sp, modifier = Modifier.padding(horizontal = 8.dp),color = Color(0xFFFFF6EE))
+            Text(text = quantity.toString(), fontSize = 18.sp, modifier = Modifier.padding(horizontal = 8.dp), color = Color(0xFFFFF6EE))
             CartButton(
                 icon = Icons.Default.KeyboardArrowUp,
-                onClick = { quantity++}
+                onClick = { quantity++ }
             )
         }
 
         // Hiển thị tổng giá tiền
-        Text(text = "$totalPrice VND", fontSize = 18.sp, color = Color(0xFFFFF6EE))
+        Text(text = "${product.moneyProduct.toInt() * quantity} VND", fontSize = 18.sp, color = Color(0xFFFFF6EE))
 
         // Nút thêm vào giỏ hàng
         CartButton(
             icon = Icons.Default.ShoppingCart,
-            onClick = { /* In hình */ }
+            onClick = {
+                onAddToCart(quantity)
+            }
         )
     }
 }
+
 @Composable
 fun CartButton(icon: ImageVector, onClick: () -> Unit) {
     IconButton(onClick = onClick) {
