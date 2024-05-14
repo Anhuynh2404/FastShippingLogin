@@ -42,39 +42,13 @@ import com.example.fastshippinglogin.R
 import com.example.fastshippinglogin.viewmodel.cart.CartViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import androidx.compose.runtime.livedata.observeAsState
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(navController: NavHostController, cartViewModel: CartViewModel = viewModel()) {
-    val currentUser = FirebaseAuth.getInstance().currentUser
-    val cartItems = remember { mutableStateListOf<CartItem>() }
-
-    LaunchedEffect(currentUser) {
-        if (currentUser != null) {
-            val cartRef = FirebaseFirestore.getInstance()
-                .collection("carts")
-                .document(currentUser.uid)
-                .collection("items")
-
-            cartRef.addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    // Handle error
-                    return@addSnapshotListener
-                }
-
-                if (snapshot != null) {
-                    cartItems.clear()
-                    for (document in snapshot.documents) {
-                        val item = document.toObject(CartItem::class.java)
-                        if (item != null) {
-                            cartItems.add(item)
-                        }
-                    }
-                }
-            }
-        }
-    }
+    val cartItems by cartViewModel.cartItems.observeAsState(emptyList())
 
     Scaffold(
         topBar = {
@@ -100,14 +74,14 @@ fun CartScreen(navController: NavHostController, cartViewModel: CartViewModel = 
         ) {
             // Hiển thị danh sách sản phẩm trong giỏ hàng
             cartItems.forEach { cartItem ->
-                CartItem(cartItem)
+                CartItem(cartItem, cartViewModel)
             }
         }
     }
 }
 
 @Composable
-fun CartItem(cartItem: CartItem) {
+fun CartItem(cartItem: CartItem, cartViewModel: CartViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -116,7 +90,7 @@ fun CartItem(cartItem: CartItem) {
     ) {
         // Hình ảnh sản phẩm
         Image(
-            painter = rememberImagePainter(data = cartItem.imageUrl),
+            painter = rememberImagePainter(data = cartItem.product?.imgProduct),
             contentDescription = "Ảnh sản phẩm",
             modifier = Modifier
                 .size(64.dp)
@@ -129,28 +103,34 @@ fun CartItem(cartItem: CartItem) {
         Column(
             modifier = Modifier.weight(1f)
         ) {
-            Text(text = cartItem.name)
-            Text(text = "Giá: ${cartItem.price} VND")
-            QuantityButton(cartItem)
+            cartItem.product?.let { Text(text = it.nameProduct) }
+            Text(text = "Giá: ${cartItem.product?.moneyProduct} VND")
+            QuantityButton(cartItem, cartViewModel)
         }
 
         // Nút xóa sản phẩm khỏi giỏ hàng
-        IconButton(onClick = {  }) {
+        IconButton(onClick = { cartViewModel.removeCartItem(cartItem) }) {
             Icon(Icons.Default.Delete, contentDescription = "Xóa")
         }
     }
 }
 
 @Composable
-fun QuantityButton(cartItem: CartItem) {
+fun QuantityButton(cartItem: CartItem, cartViewModel: CartViewModel) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = {  }) {
+        IconButton(onClick = {
+            if (cartItem.quantity > 1) {
+                cartViewModel.updateCartItemQuantity(cartItem, cartItem.quantity - 1)
+            }
+        }) {
             Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Giảm số lượng")
         }
         Text(text = cartItem.quantity.toString(), fontSize = 16.sp, modifier = Modifier.padding(horizontal = 8.dp))
-        IconButton(onClick = {  }) {
+        IconButton(onClick = {
+            cartViewModel.updateCartItemQuantity(cartItem, cartItem.quantity + 1)
+        }) {
             Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Tăng số lượng")
         }
     }
@@ -159,7 +139,7 @@ fun QuantityButton(cartItem: CartItem) {
 @Composable
 fun BottomBar(cartItems: List<CartItem>, navController: NavHostController) {
     val totalQuantity = cartItems.sumBy { it.quantity }
-    val totalPrice = cartItems.sumBy { it.price.toInt() * it.quantity }
+    val totalPrice = cartItems.sumBy { it.quantity * (it.product?.moneyProduct?.toInt() ?: 0) }
 
     Row(
         modifier = Modifier

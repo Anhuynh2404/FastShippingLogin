@@ -84,7 +84,7 @@ dependencies {
 
     implementation ("io.coil-kt:coil-compose:2.2.2")
     implementation ("io.coil-kt:coil-gif:2.2.2")
-    implementation ("androidx.compose.runtime:runtime-livedata:1.0.5")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.4.3")
 
     implementation ("androidx.appcompat:appcompat:1.3.1")
 

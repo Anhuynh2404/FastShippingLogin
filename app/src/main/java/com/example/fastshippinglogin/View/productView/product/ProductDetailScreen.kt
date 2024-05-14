@@ -56,7 +56,7 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun ProductDetailScreen(navController: NavHostController, productId: String?, viewModel: RestaurantViewModel = viewModel(), cartViewModel: CartViewModel = viewModel()) {
     val product by viewModel.product.collectAsState()
-
+    val currentUser = FirebaseAuth.getInstance().currentUser
     LaunchedEffect(productId) {
         if (productId != null && productId.isNotEmpty()) {
             Log.d("ProductDetailScreen", "ProductId: $productId")
@@ -85,21 +85,14 @@ fun ProductDetailScreen(navController: NavHostController, productId: String?, vi
             )
         },
         bottomBar = {
-            product?.let {
-                BottomBar(
-                    product = it,
-                    onAddToCart = { quantity ->
-                        val cartItem = CartItem(
-                            productId = it.id,
-                            name = it.nameProduct,
-                            price = it.moneyProduct,
-                            imageUrl = it.imgProduct,
-                            quantity = quantity,
-                            userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-                        )
-                        cartViewModel.addToCart(cartItem)
-                    }
-                )
+            currentUser?.uid?.let { userId ->
+                product?.let {
+                    BottomBar(
+                        product = it,
+                        userId = userId,
+                        viewModel = cartViewModel
+                    )
+                }
             }
         }
     ) { innerPadding ->
@@ -158,7 +151,7 @@ fun ProductInfor(product: Product) {
 }
 
 @Composable
-fun BottomBar(product: Product, onAddToCart: (Int) -> Unit) {
+fun BottomBar(product: Product, userId: String, viewModel: CartViewModel) {
     var quantity by remember { mutableStateOf(1) }
    //val totalPrice = (quantity * price.toInt()).toString()
 
@@ -194,7 +187,7 @@ fun BottomBar(product: Product, onAddToCart: (Int) -> Unit) {
         CartButton(
             icon = Icons.Default.ShoppingCart,
             onClick = {
-                onAddToCart(quantity)
+                viewModel.addToCart(userId, product, quantity)
             }
         )
     }
