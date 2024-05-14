@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.fastshippinglogin.Model.Restaurant
+import com.example.fastshippinglogin.View.productView.product.MenuScreen
 import com.example.fastshippinglogin.viewmodel.restaurant.RestaurantViewModel
 import kotlin.math.log
 
@@ -79,7 +80,7 @@ fun RestaurantDetailScreen(
             FunctionButtons()
             Spacer(modifier = Modifier.height(8.dp))
             // TabRow
-            RestaurantTabRow()
+            RestaurantTabRow(navController,resID)
         }
     }
 }
@@ -155,7 +156,10 @@ fun ActionButton(icon: ImageVector, text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun RestaurantTabRow() {
+fun RestaurantTabRow(
+    navController: NavHostController,
+    id :String
+) {
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf("Menu", "Thông tin", "Hình ảnh", "Review")
 
@@ -172,27 +176,18 @@ fun RestaurantTabRow() {
                 )
             }
         }
-        when (selectedTabIndex) {
-            0 -> MenuContent()
-            1 -> InfoContent()
-            2 -> ImagesContent()
-            3 -> ReviewContent()
+        Box(modifier = Modifier.fillMaxSize()) {
+            when (selectedTabIndex) {
+                0 -> MenuScreen(navController , restaurantId = id)
+                1 -> InfoContent()
+                2 -> ImagesContent()
+                3 -> ReviewContent()
+            }
         }
     }
 }
 
-@Composable
-fun MenuContent() {
-    Text(text = "Menu content")
-    Text(text = "Menu content")
-    Spacer(modifier = Modifier.height(8.dp))
-    Text(text = "Menu content")
-    Text(text = "Menu content")
-    Text(text = "Menu content")
-    Text(text = "Menu content")
-    Text(text = "Menu content")
-    Text(text = "Menu content")
-}
+
 
 @Composable
 fun InfoContent() {

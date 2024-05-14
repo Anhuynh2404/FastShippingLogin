@@ -37,6 +37,7 @@ import com.example.fastshippinglogin.View.components.OrderTab
 import com.example.fastshippinglogin.View.settingview.account.EditProfileScreen
 import com.example.fastshippinglogin.View.productView.RestaurantDetailScreen
 import com.example.fastshippinglogin.View.productView.RestaurantScreen
+import com.example.fastshippinglogin.View.productView.product.ProductDetailScreen
 import com.example.fastshippinglogin.viewmodel.account.updateProfileInFirestore
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -86,7 +87,7 @@ fun OrderFoodApp(
                 },
                 contentColor = Color.White,
                 modifier = Modifier
-                    .absoluteOffset(y = (65).dp)
+                    .absoluteOffset(y = (80).dp)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.order_icon),
@@ -162,6 +163,10 @@ fun OrderFoodApp(
 //            composable("restaurantDetail/{restaurantId}") { backStackEntry ->
 //                RestaurantDetailScreen(navController)
 //            }
+            composable("productDetail/{productId}") { backStackEntry ->
+                val productId = backStackEntry.arguments?.getString("productId")
+                ProductDetailScreen(navController, productId)
+            }
         }
     }
 }

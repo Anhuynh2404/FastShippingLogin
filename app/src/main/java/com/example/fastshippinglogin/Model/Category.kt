@@ -3,8 +3,9 @@ package com.example.fastshippinglogin.Model
 import android.net.Uri
 
 data class Category(
-    val name: String,
-    val imageUri: Uri?
+    val id: String = "",
+    val nameCategory: String,
+   // val imageUri: Uri?
 ){
-    constructor():this("",null)
+    constructor():this("","")
 }
