@@ -84,7 +84,7 @@ fun SettingsScreen(
                     androidx.compose.material.Text(
                         text = "Cài đặt",
                         fontFamily = Poppins,
-                        color = MaterialTheme.colors.primaryVariant,
+                        color = Color.White,
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 16.sp

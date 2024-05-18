@@ -33,7 +33,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.example.fastshippinglogin.View.MyBottomAppBar
 import com.example.fastshippinglogin.View.ProfileHome
 import com.example.fastshippinglogin.View.cartview.CartScreen
-import com.example.fastshippinglogin.View.components.OrderTab
+import com.example.fastshippinglogin.View.orderView.OrderTestScreen
 import com.example.fastshippinglogin.View.settingview.account.EditProfileScreen
 import com.example.fastshippinglogin.View.productView.RestaurantDetailScreen
 import com.example.fastshippinglogin.View.productView.RestaurantScreen
@@ -118,9 +118,10 @@ fun OrderFoodApp(
                 RestaurantScreen(navController)
             }
             composable(route = "Order") { // Chỉ định route cho ScreenA
-                OrderTab(
-                    user = user!!
-                )
+//                OrderTab(
+//                    user = user!!
+//                )
+                OrderTestScreen(navController)
             }
             composable(route = "Profile") { // Chỉ định route cho ScreenB
 

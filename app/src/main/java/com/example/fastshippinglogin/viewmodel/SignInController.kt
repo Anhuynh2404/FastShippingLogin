@@ -16,7 +16,6 @@ fun signIn(
                 val user = auth.currentUser
                 onSignedIn(user!!)
             } else {
-                // Handle sign-in failure
                 onSignInError("Invalid email or password")
             }
         }

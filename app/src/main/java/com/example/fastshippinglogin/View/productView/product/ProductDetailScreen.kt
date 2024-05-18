@@ -10,28 +10,20 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.*
@@ -39,28 +31,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import coil.compose.rememberImagePainter
-import com.example.fastshippinglogin.Model.CartItem
 import com.example.fastshippinglogin.Model.Product
-import com.example.fastshippinglogin.View.productView.RestaurantInfo
+import com.example.fastshippinglogin.R
 import com.example.fastshippinglogin.viewmodel.cart.CartViewModel
 import com.example.fastshippinglogin.viewmodel.restaurant.RestaurantViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun ProductDetailScreen(navController: NavHostController, productId: String?, viewModel: RestaurantViewModel = viewModel(), cartViewModel: CartViewModel = viewModel()) {
-    val product by viewModel.product.collectAsState()
+fun ProductDetailScreen(navController: NavHostController, productId: String?, restaurantViewModel: RestaurantViewModel = viewModel(), cartViewModel: CartViewModel = viewModel()) {
+    val product by restaurantViewModel.product.collectAsState()
+   // val product by restaurantViewModel.products.collectAsState()
+
     val currentUser = FirebaseAuth.getInstance().currentUser
     LaunchedEffect(productId) {
         if (productId != null && productId.isNotEmpty()) {
             Log.d("ProductDetailScreen", "ProductId: $productId")
-            viewModel.getProductById(productId)
+            restaurantViewModel.getProductById(productId)
         } else {
             Log.e("ProductDetailScreen", "Invalid ProductId: $productId")
         }
@@ -88,6 +80,7 @@ fun ProductDetailScreen(navController: NavHostController, productId: String?, vi
             currentUser?.uid?.let { userId ->
                 product?.let {
                     BottomBar(
+                        id_product =productId,
                         product = it,
                         userId = userId,
                         viewModel = cartViewModel
@@ -114,7 +107,7 @@ fun ProductDetailScreen(navController: NavHostController, productId: String?, vi
 fun ProductInfor(product: Product) {
     Column {
         Image(
-            painter = rememberImagePainter(data = product.imgProduct),
+            painter = /*rememberImagePainter(data = product.imgProduct)*/painterResource(id = R.drawable.ic_launcher_background),
             contentDescription = "Ảnh sản phẩm",
             modifier = Modifier
                 .fillMaxWidth()
@@ -151,7 +144,7 @@ fun ProductInfor(product: Product) {
 }
 
 @Composable
-fun BottomBar(product: Product, userId: String, viewModel: CartViewModel) {
+fun BottomBar(id_product:String?,product: Product, userId: String, viewModel: CartViewModel) {
     var quantity by remember { mutableStateOf(1) }
    //val totalPrice = (quantity * price.toInt()).toString()
 
@@ -187,7 +180,7 @@ fun BottomBar(product: Product, userId: String, viewModel: CartViewModel) {
         CartButton(
             icon = Icons.Default.ShoppingCart,
             onClick = {
-                viewModel.addToCart(userId, product, quantity)
+                id_product?.let { viewModel.addToCart(it,userId, product, quantity) }
             }
         )
     }

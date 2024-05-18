@@ -21,3 +21,7 @@ val LightPrimaryColor = Color(0xFFFFF6EE)
 val primary = Color(0xFF6200EE)
 val primaryVariant = Color(0xFF3700B3)
 val secondary = Color(0xFF03DAC6)
+
+val mainColorWhite = Color(0xFFFFFFFF)
+val mainColorOrrange = Color(0xFFFF914D)
+val mainColorBlue = Color(0xFF38B6FF)

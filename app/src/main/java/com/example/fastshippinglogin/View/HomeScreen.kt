@@ -149,8 +149,6 @@ fun Content(firstName: String) {
         ServiceSection()
         Spacer(modifier = Modifier.height(16.dp))
         BestSellerSection()
-        Spacer(modifier = Modifier.height(16.dp))
-        BestSellerSection()
     }
 }
 
@@ -159,7 +157,8 @@ fun Header(){
     Card(
         Modifier
             .height(64.dp)
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .background(Color(0xFF3700B3)),
         //elevation = 4.dp,
         shape = RoundedCornerShape(16 .dp)
     ) {
@@ -180,7 +179,7 @@ fun Header(){
             ) {
                 Icon(painter = painterResource(id = R.drawable.ic_money), contentDescription = "", tint = Color(0xFF6FCF97))
                 Column {
-                    Text(text = "120.000 VND", fontWeight = FontWeight.Bold, fontSize = 16 .sp)
+                    Text(text = "120.000 VND", fontSize = 14 .sp, color = Color.White)
                     Text(text = "Top up", color = MaterialTheme.colorScheme.primary, fontSize = 12 .sp)
                 }
             }
@@ -196,7 +195,7 @@ fun Header(){
             ) {
                 Icon(painter = painterResource(id = R.drawable.ic_coin), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                 Column {
-                    Text(text = "100", fontWeight = FontWeight.Bold, fontSize = 16 .sp)
+                    Text(text = "100", fontSize = 14 .sp, color = Color.White,)
                     Text(text = "Xu", color = Color.LightGray, fontSize = 12 .sp)
                 }
             }
@@ -234,6 +233,15 @@ fun VerticalDivider() {
 
 @Composable
 fun Promotions(firstName:String){
+    val imageLoader = ImageLoader.Builder(LocalContext.current)
+        .components {
+            if (Build.VERSION.SDK_INT >= 28) {
+                add(ImageDecoderDecoder.Factory())
+            } else {
+                add(GifDecoder.Factory())
+            }
+        }
+        .build()
     LazyRow(
         Modifier.height(160 .dp),
         contentPadding = PaddingValues(horizontal = 16 .dp),
@@ -243,7 +251,16 @@ fun Promotions(firstName:String){
             PromotionItemGreeting(
                 title = "Xin chào ngày mới,",
                 name = firstName,
-                backgroundColor = MaterialTheme.colorScheme.primary
+                backgroundColor = Color.Magenta,
+                bg = rememberAsyncImagePainter(R.drawable.greeting, imageLoader)
+            )
+        }
+        item {
+            PromotionItemGreeting(
+                title = "",
+                name = "",
+                backgroundColor = Color.Magenta,
+                bg = painterResource(id = R.drawable.nhahang1)
             )
         }
     }
@@ -253,7 +270,8 @@ fun Promotions(firstName:String){
 fun PromotionItemGreeting(
     title: String = "",
     name: String = "",
-    backgroundColor: Color = Color.Transparent,
+    backgroundColor: Color,
+    bg : Painter
 ){
     Card(
         Modifier
@@ -272,20 +290,11 @@ fun PromotionItemGreeting(
                 Text(text = title, fontSize = 16.sp, color = Color.White)
                 Text(text = name, fontSize = 20 .sp, color = Color.White, fontWeight = FontWeight.Bold)
             }
-            val imageLoader = ImageLoader.Builder(LocalContext.current)
-                .components {
-                    if (Build.VERSION.SDK_INT >= 28) {
-                        add(ImageDecoderDecoder.Factory())
-                    } else {
-                        add(GifDecoder.Factory())
-                    }
-                }
-                .build()
             Image(
-                painter = rememberAsyncImagePainter(R.drawable.greeting, imageLoader),
+                painter = bg,
                 contentDescription = "",
                 Modifier
-                    .fillMaxHeight()
+                    .fillMaxSize()
                     .weight(1f),
                 alignment = Alignment.Center,
                 contentScale = ContentScale.Crop
@@ -340,7 +349,7 @@ fun ServiceSection() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Dịch vụ", style = MaterialTheme.typography.labelMedium)
+            Text(text = "Danh mục", style = MaterialTheme.typography.labelMedium)
             TextButton(onClick = {}) {
                 Text(text = "Tất cả", color = MaterialTheme.colorScheme.primary)
             }
@@ -410,9 +419,9 @@ fun BestSellerSection() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Có thể bạn sẽ thích", style = MaterialTheme.typography.labelLarge)
+            Text(text = "Tối nay ăn gì?", style = MaterialTheme.typography.labelLarge)
             TextButton(onClick = {}) {
-                Text(text = "More", color = MaterialTheme.colorScheme.primary)
+                Text(text = "Xem thêm", color = MaterialTheme.colorScheme.primary)
             }
         }
 
@@ -427,26 +436,23 @@ fun BestSellerItems() {
     ) {
         item {
             BestSellerItem(
-                imagePainter = painterResource(id = R.drawable.ic_launcher_background),
-                title = "Iceberg Lettuce",
-                price = "1.99",
-                discountPercent = 10
+                imagePainter = painterResource(id = R.drawable.img),
+                title = "Bánh xèo bà ba",
+                price = "20.000/3",
             )
         }
         item {
             BestSellerItem(
-                imagePainter = painterResource(id = R.drawable.ic_launcher_foreground),
-                title = "Apple",
-                price = "2.64",
-                discountPercent = 5
+                imagePainter = painterResource(id = R.drawable.chickken),
+                title = "Gà rán AH",
+                price = "35.000",
             )
         }
         item {
             BestSellerItem(
-                imagePainter = painterResource(id = R.drawable.ic_launcher_background),
-                title = "Meat",
-                price = "4.76",
-                discountPercent = 20
+                imagePainter = painterResource(id = R.drawable.comtam),
+                title = "Cơm Tấm Hội An",
+                price = "25.000",
             )
         }
     }
@@ -472,7 +478,7 @@ fun BestSellerItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f),
-                contentScale = ContentScale.Fit
+                contentScale = ContentScale.Crop
             )
             Column(
                 Modifier
