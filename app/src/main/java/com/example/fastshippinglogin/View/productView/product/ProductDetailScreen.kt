@@ -1,6 +1,7 @@
 package com.example.fastshippinglogin.View.productView.product
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -147,6 +149,7 @@ fun ProductInfor(product: Product) {
 fun BottomBar(id_product:String?,product: Product, userId: String, viewModel: CartViewModel) {
     var quantity by remember { mutableStateOf(1) }
    //val totalPrice = (quantity * price.toInt()).toString()
+    val context = LocalContext.current
 
     Row(
         modifier = Modifier
@@ -180,7 +183,11 @@ fun BottomBar(id_product:String?,product: Product, userId: String, viewModel: Ca
         CartButton(
             icon = Icons.Default.ShoppingCart,
             onClick = {
-                id_product?.let { viewModel.addToCart(it,userId, product, quantity) }
+                //id_product?.let { viewModel.addToCart(it,userId, product, quantity) }
+                id_product?.let { viewModel.addToCart(it,userId , product, quantity) { errorMessage ->
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+                }
             }
         )
     }

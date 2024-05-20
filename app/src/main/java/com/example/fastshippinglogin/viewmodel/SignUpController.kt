@@ -6,20 +6,20 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 fun signUp(
     auth: FirebaseAuth,
-    email: String,
+    emailUser: String,
     password: String,
     firstName: String,
     lastName: String,
     onSignedIn: (FirebaseUser) -> Unit
 ) {
-    auth.createUserWithEmailAndPassword(email, password)
+    auth.createUserWithEmailAndPassword(emailUser, password)
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val user = auth.currentUser
                 val userProfile = hashMapOf(
                     "firstName" to firstName,
                     "lastName" to lastName,
-                    "email" to email
+                    "emailUser" to emailUser
                 )
 
                 val firestore = FirebaseFirestore.getInstance()

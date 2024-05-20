@@ -5,17 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.fastshippinglogin.Model.CartItem
+import com.example.fastshippinglogin.Model.Order
 import com.example.fastshippinglogin.Model.Product
-import com.google.firebase.Firebase
+import com.example.fastshippinglogin.data.PaymentMethod
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.core.Tag
 import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.firestore
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.tasks.await
 
 class CartViewModel : ViewModel() {
     private val _cartItems = MutableLiveData<List<CartItem>>()
@@ -69,7 +65,6 @@ class CartViewModel : ViewModel() {
             Log.e("CartViewModel", "No valid product IDs to query")
         }
     }
-
     private fun loadCartItems() {
         currentUser?.let { user ->
             val cartRef = db.collection("carts").document(user.uid).collection("items")
@@ -89,41 +84,84 @@ class CartViewModel : ViewModel() {
         }
     }
 
-    fun addToCart(productId:String,userId: String, product: Product, quantity: Int) {
+//    fun addToCart(productId:String,userId: String, product: Product, quantity: Int) {
+//        val cartRef = db.collection("carts").document(userId).collection("items")
+//
+//        cartRef.whereEqualTo("productId", productId).get()
+//            .addOnSuccessListener { documents ->
+//                if (!documents.isEmpty) {
+//                    // Sản phẩm đã tồn tại trong giỏ hàng, cập nhật số lượng
+//                    for (document in documents) {
+//                        val existingItem = document.toObject(CartItem::class.java)
+//                        val newQuantity = existingItem.quantity + quantity
+//                        cartRef.document(document.id).update("quantity", newQuantity)
+//                            .addOnSuccessListener {
+//                                Log.d("CartViewModel", "Item quantity updated in cart")
+//                            }
+//                            .addOnFailureListener { e ->
+//                                Log.e("CartViewModel", "Error updating item quantity in cart", e)
+//                            }
+//                    }
+//                } else {
+//                    // Sản phẩm chưa tồn tại trong giỏ hàng, thêm mới
+//                    val cartItem = CartItem(userId, productId, quantity)
+//                    cartRef.add(cartItem)
+//                        .addOnSuccessListener {
+//                            Log.d("CartViewModel", "Item added to cart")
+//                        }
+//                        .addOnFailureListener { e ->
+//                            Log.e("CartViewModel", "Error adding item to cart", e)
+//                        }
+//                }
+//            }
+//            .addOnFailureListener { e ->
+//                Log.e("CartViewModel", "Error checking item in cart", e)
+//            }
+//    }
+    fun addToCart(productId: String, userId: String, product: Product, quantity: Int, onFailure: (String) -> Unit) {
         val cartRef = db.collection("carts").document(userId).collection("items")
 
-        cartRef.whereEqualTo("productId", productId).get()
-            .addOnSuccessListener { documents ->
-                if (!documents.isEmpty) {
-                    // Sản phẩm đã tồn tại trong giỏ hàng, cập nhật số lượng
-                    for (document in documents) {
-                        val existingItem = document.toObject(CartItem::class.java)
-                        val newQuantity = existingItem.quantity + quantity
-                        cartRef.document(document.id).update("quantity", newQuantity)
+        cartRef.get().addOnSuccessListener { snapshot ->
+            val currentCartItems = snapshot.documents.mapNotNull { it.toObject(CartItem::class.java) }
+            val currentRestaurantId = currentCartItems.firstOrNull()?.restaurantId
+
+            if (currentRestaurantId != null && currentRestaurantId != product.id_Restaurant) {
+                onFailure("Giỏ hàng chỉ có thể chứa các món ăn từ cùng một nhà hàng. Vui lòng xóa hoặc đặt hàng giỏ hàng hiện tại trước khi thêm món ăn từ nhà hàng mới.")
+                return@addOnSuccessListener
+            }
+
+            cartRef.whereEqualTo("productId", productId).get()
+                .addOnSuccessListener { documents ->
+                    if (!documents.isEmpty) {
+                        // Sản phẩm đã tồn tại trong giỏ hàng, cập nhật số lượng
+                        for (document in documents) {
+                            val existingItem = document.toObject(CartItem::class.java)
+                            val newQuantity = existingItem.quantity + quantity
+                            cartRef.document(document.id).update("quantity", newQuantity)
+                                .addOnSuccessListener {
+                                    Log.d("CartViewModel", "Item quantity updated in cart")
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.e("CartViewModel", "Error updating item quantity in cart", e)
+                                }
+                        }
+                    } else {
+                        // Sản phẩm chưa tồn tại trong giỏ hàng, thêm mới
+                        val cartItem = CartItem(userId, productId, quantity, product.id_Restaurant)
+                        cartRef.add(cartItem)
                             .addOnSuccessListener {
-                                Log.d("CartViewModel", "Item quantity updated in cart")
+                                Log.d("CartViewModel", "Item added to cart")
                             }
                             .addOnFailureListener { e ->
-                                Log.e("CartViewModel", "Error updating item quantity in cart", e)
+                                Log.e("CartViewModel", "Error adding item to cart", e)
                             }
                     }
-                } else {
-                    // Sản phẩm chưa tồn tại trong giỏ hàng, thêm mới
-                    val cartItem = CartItem(userId, productId, quantity)
-                    cartRef.add(cartItem)
-                        .addOnSuccessListener {
-                            Log.d("CartViewModel", "Item added to cart")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.e("CartViewModel", "Error adding item to cart", e)
-                        }
                 }
-            }
-            .addOnFailureListener { e ->
-                Log.e("CartViewModel", "Error checking item in cart", e)
-            }
+                .addOnFailureListener { e ->
+                    Log.e("CartViewModel", "Error checking item in cart", e)
+                }
+        }
     }
-
 
     fun updateCartItemQuantity(cartItem: CartItem, newQuantity: Int) {
         val userId = cartItem.userId
@@ -182,6 +220,29 @@ class CartViewModel : ViewModel() {
                 }
         }
     }
+    fun clearCart() {
+        currentUser?.let { user ->
+            val cartRef = db.collection("carts").document(user.uid).collection("items")
+            cartRef.get()
+                .addOnSuccessListener { snapshot ->
+                    val batch = db.batch()
+                    for (document in snapshot.documents) {
+                        batch.delete(document.reference)
+                    }
+                    batch.commit()
+                        .addOnSuccessListener {
+                            Log.d("CartViewModel", "Cart cleared successfully")
+                            _cartItems.value = emptyList() // Update local cart items
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("CartViewModel", "Error clearing cart", e)
+                        }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("CartViewModel", "Error getting cart items to clear", e)
+                }
+        }
+    }
     fun loadCartItems(userId: String) {
         db.collection("carts").document(userId).collection("items")
             .addSnapshotListener { snapshot, e ->
@@ -195,6 +256,61 @@ class CartViewModel : ViewModel() {
                     _cartItems.value = items
                 }
             }
+    }
+
+
+    fun placeOrder(order: Order, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        val orderData = hashMapOf(
+            "userId" to order.userId,
+            "items" to order.items.map { item ->
+                hashMapOf(
+                    "productId" to item.productId,
+                    "quantity" to item.quantity,
+                    "price" to item.price
+                )
+            },
+            "totalOrderAmount" to order.totalOrderAmount,
+            "shippingFee" to order.shippingFee,
+            "discount" to order.discount,
+            "totalPaymentAmount" to order.totalPaymentAmount,
+            "statusOrder" to order.statusOrder,
+            "address" to order.address,
+            "phone" to order.phone,
+            "paymentMethod" to order.paymentMethod,
+            "timestamp" to FieldValue.serverTimestamp()
+        )
+
+        db.collection("orders")
+            .add(orderData)
+            .addOnSuccessListener {
+                onSuccess()
+                clearCart()
+            }
+            .addOnFailureListener { e ->
+                onFailure(e)
+            }
+    }
+    private var selectedPaymentMethod: String = PaymentMethod.CASH.toString()
+    private var selectedPhone: String = ""
+
+    fun getShippingFee(): Int {
+        return 20000
+    }
+    fun getDiscount(): Int {
+        return 10000
+    }
+    fun getPaymentMethod(): String {
+        return selectedPaymentMethod
+    }
+    fun setPaymentMethod(method: PaymentMethod) {
+        selectedPaymentMethod = method.toString()
+    }
+
+    fun getPhone(): String {
+        return selectedPhone
+    }
+    fun setPhone(method: String) {
+        selectedPhone = method
     }
 
 

@@ -31,7 +31,7 @@ fun updateProfileInFirestore(uid: String, user: User) {
     val userProfile = hashMapOf(
         "firstName" to user.firstName,
         "lastName" to user.lastName,
-        "email" to user.email,
+        "email" to user.emailUser,
         "phone" to user.phone,
         "address" to user.address,
         "imageUrl" to user.imageUrl

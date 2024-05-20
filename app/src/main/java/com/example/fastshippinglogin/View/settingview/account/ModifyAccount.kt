@@ -132,8 +132,8 @@ fun EditProfileScreen(
 
                 item {
                     TextField(
-                        value = editedUser.email,
-                        onValueChange = { editedUser = editedUser.copy(email = it) },
+                        value = editedUser.emailUser,
+                        onValueChange = { editedUser = editedUser.copy(emailUser = it) },
                         label = { Text("Email") },
                         readOnly = true,
                         modifier = textFieldModifier

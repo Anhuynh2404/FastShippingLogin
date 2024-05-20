@@ -33,11 +33,15 @@ import com.google.firebase.auth.FirebaseUser
 import com.example.fastshippinglogin.View.MyBottomAppBar
 import com.example.fastshippinglogin.View.ProfileHome
 import com.example.fastshippinglogin.View.cartview.CartScreen
-import com.example.fastshippinglogin.View.orderView.OrderTestScreen
+import com.example.fastshippinglogin.View.components.OrderTab
+import com.example.fastshippinglogin.View.orderView.OrderScreen
+import com.example.fastshippinglogin.View.orderView.address.AddressScreen
+import com.example.fastshippinglogin.View.orderView.ordersuccess.OrderSuccess
 import com.example.fastshippinglogin.View.settingview.account.EditProfileScreen
 import com.example.fastshippinglogin.View.productView.RestaurantDetailScreen
 import com.example.fastshippinglogin.View.productView.RestaurantScreen
 import com.example.fastshippinglogin.View.productView.product.ProductDetailScreen
+import com.example.fastshippinglogin.ui.theme.mainColorOrrange
 import com.example.fastshippinglogin.viewmodel.account.updateProfileInFirestore
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -48,7 +52,6 @@ private val auth: FirebaseAuth by lazy { Firebase.auth }
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun OrderFoodApp(
-//    viewModel: OrderViewModel = viewModel(),
     user: FirebaseUser,
     navController: NavHostController = rememberNavController()
 ) {
@@ -67,40 +70,54 @@ fun OrderFoodApp(
                     val lastName = document.getString("lastName")
                     val phone = document.getString("phone")
                     val address = document.getString("address")
-                    userProfile.value = User(firstName, lastName, user.email ?: "",phone,address)
+                    userProfile.value = User(firstName, lastName, user.email ?: "", phone, address)
                 } else {
                     // Handle the case where the document doesn't exist
                 }
             }
             .addOnFailureListener { e ->
                 // Handle failure
-
             }
     }
 
+    val shouldShowBottomBar = backStackEntry?.destination?.route != "Order" &&
+            backStackEntry?.destination?.route != "Order/{address}" &&
+            backStackEntry?.destination?.route != "Address" &&
+            backStackEntry?.destination?.route != "OrderSuccess" &&
+            backStackEntry?.destination?.route != "restaurantDetail/{restaurantId}" &&
+            backStackEntry?.destination?.route != "productDetail/{productId}"
+
     Scaffold(
-        bottomBar = { MyBottomAppBar(navController) },
+        bottomBar = {
+            if (shouldShowBottomBar) {
+                MyBottomAppBar(navController)
+            }else{
+
+            }
+        },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    navController.navigate("Cart")
-                },
-                contentColor = Color.White,
-                modifier = Modifier
-                    .absoluteOffset(y = (80).dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.order_icon),
-                    contentDescription = "product",
+            if (shouldShowBottomBar) {
+                FloatingActionButton(
+                    onClick = {
+                        navController.navigate("Cart")
+                    },
+                    contentColor = Color.White,
                     modifier = Modifier
-                        .height(30.dp)
-                        .width(30.dp)
-                )
+                        .absoluteOffset(y = (80).dp),
+                    containerColor = mainColorOrrange
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.order_icon),
+                        contentDescription = "product",
+                        modifier = Modifier
+                            .height(30.dp)
+                            .width(30.dp)
+                    )
+                }
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
         modifier = Modifier.padding(bottom = 0.dp),
-        // contentWindowInsets = WindowInsets(right = 50 .dp),
     ) { innerPadding ->
         NavHost(
             navController = navController,
@@ -109,62 +126,67 @@ fun OrderFoodApp(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            composable(route = "Home") { // Chỉ định route cho ScreenA
+            composable(route = "Home") {
                 MainContent(
-                    user = user!!
+                    user = user
                 )
             }
-            composable(route = "FeedBack") { // Chỉ định route cho ScreenB
+            composable(route = "FeedBack") {
                 RestaurantScreen(navController)
             }
-            composable(route = "Order") { // Chỉ định route cho ScreenA
-//                OrderTab(
-//                    user = user!!
-//                )
-                OrderTestScreen(navController)
-            }
-            composable(route = "Profile") { // Chỉ định route cho ScreenB
-
-                userProfile.value?.let { users ->
-                    SettingsScreen(navController,users)
-                }
-            }
-            composable(route = "Cart") { // Chỉ định route cho ScreenB
-               //FoodApp()
+            composable(route = "Cart") {
                 CartScreen(navController)
             }
-            composable(route = "ViewProfile") { // Chỉ định route cho ScreenB
+            composable(route = "Order") {
+                OrderScreen(navController)
+            }
+            composable("Order/{address}") { backStackEntry ->
+                val address = backStackEntry.arguments?.getString("address") ?: ""
+                OrderScreen(navController, address)
+            }
+            composable(route = "Address") {
+                AddressScreen(navController)
+            }
+            composable(route = "OrderSuccess") {
+                OrderSuccess(navController)
+            }
+
+            composable(route = "OrderState") {
+                OrderTab(navController)
+            }
+
+            composable(route = "Profile") {
+                userProfile.value?.let { users ->
+                    SettingsScreen(navController, users)
+                }
+            }
+            composable(route = "ViewProfile") {
                 userProfile.value?.let { users ->
                     ProfileHome(navController, users)
                 }
             }
-            composable(route = "Logout") { // Chỉ định route cho ScreenB
+            composable(route = "Logout") {
                 AuthScreen(
                     onSignedIn = { signedInUser ->
                         users = signedInUser
                     }
                 )
             }
-            composable(route = "ModifyInfor") { // Chỉ định route cho ScreenB
+            composable(route = "ModifyInfor") {
                 userProfile.value?.let { users ->
-                    EditProfileScreen(navController,user = users) { updatedUser ->
+                    EditProfileScreen(navController, user = users) { updatedUser ->
                         updateProfileInFirestore(user.uid, updatedUser)
                     }
                 }
             }
-            composable(route = "SaveAccount") { // Chỉ định route cho ScreenB
+            composable(route = "SaveAccount") {
                 userProfile.value?.let { users ->
                     ProfileHome(navController, users)
                 }
             }
-
-           // composable("mainScreen") {  }
             composable("restaurantDetail/{restaurantId}") { backStackEntry ->
                 RestaurantDetailScreen(navController, backStackEntry.arguments?.getString("restaurantId") ?: "")
             }
-//            composable("restaurantDetail/{restaurantId}") { backStackEntry ->
-//                RestaurantDetailScreen(navController)
-//            }
             composable("productDetail/{productId}") { backStackEntry ->
                 val productId = backStackEntry.arguments?.getString("productId")
                 ProductDetailScreen(navController, productId)
@@ -172,3 +194,30 @@ fun OrderFoodApp(
         }
     }
 }
+
+//@Composable
+//fun MyAppCart(navController: NavHostController = rememberNavController()) {
+//    NavHost(
+//        navController = navController,
+//        startDestination = "Cart",
+//        modifier = Modifier
+//            .fillMaxSize()
+//    ) {
+//        composable(route = "Cart") {
+//            CartScreen(navController)
+//        }
+//        composable(route = "Order") {
+//            OrderScreen(navController)
+//        }
+//        composable("Order/{address}") { backStackEntry ->
+//            val address = backStackEntry.arguments?.getString("address") ?: ""
+//            OrderScreen(navController, address)
+//        }
+//        composable(route = "Address") {
+//            AddressScreen(navController)
+//        }
+//        composable(route = "OrderSuccess") {
+//            OrderSuccess(navController)
+//        }
+//    }
+//}

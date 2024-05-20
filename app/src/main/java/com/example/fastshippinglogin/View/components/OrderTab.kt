@@ -28,8 +28,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.fastshippinglogin.Model.User
-import com.example.fastshippinglogin.View.CupcakeScreen
-import com.example.fastshippinglogin.View.OrderAppBar
+//import com.example.fastshippinglogin.View.CupcakeScreen
+//import com.example.fastshippinglogin.View.OrderAppBar
 import com.example.fastshippinglogin.View.settingview.account.EditProfileScreen
 import com.example.fastshippinglogin.ui.theme.LightPrimaryColor
 import com.example.fastshippinglogin.ui.theme.PrimaryColor
@@ -39,26 +39,26 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OrderTab(
     navController: NavHostController = rememberNavController(),
-    user: FirebaseUser
 ) {
     val context = LocalContext.current
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = CupcakeScreen.valueOf(
-        backStackEntry?.destination?.route ?: CupcakeScreen.Start.name
-    )
+//    val currentScreen = CupcakeScreen.valueOf(
+//        backStackEntry?.destination?.route ?: CupcakeScreen.Start.name
+//    )
 
 
     Scaffold(
         topBar = {
-            OrderAppBar(
-                currentScreen = currentScreen,
-                canNavigateBack = navController.previousBackStackEntry != null,
-                navigateUp = { navController.navigateUp() }
-            )
+//            OrderAppBar(
+//                currentScreen = currentScreen,
+//                canNavigateBack = navController.previousBackStackEntry != null,
+//                navigateUp = { navController.navigateUp() }
+//            )
         }
     ) { padingValue ->
         Column(

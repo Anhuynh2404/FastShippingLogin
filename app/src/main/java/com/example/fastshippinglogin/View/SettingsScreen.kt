@@ -75,7 +75,7 @@ fun SettingsScreen(
     user: User,
 ) {
     val eUser by remember { mutableStateOf(user) }
-    val email = eUser.email
+    val email = eUser.emailUser
     val imgUrl = eUser.imageUrl
     Scaffold(
         topBar = {
