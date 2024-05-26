@@ -51,17 +51,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import com.example.fastshippinglogin.Model.User
 import com.example.fastshippinglogin.R
+import com.example.fastshippinglogin.viewmodel.account.AccountViewModel
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
-fun MainContent(user: FirebaseUser){
+fun MainContent(user: FirebaseUser, accountViewModel: AccountViewModel = viewModel()){
     val userProfile = remember { mutableStateOf<User?>(null) }
     LaunchedEffect(user.uid) {
         val firestore = FirebaseFirestore.getInstance()
@@ -73,7 +75,7 @@ fun MainContent(user: FirebaseUser){
                     val firstName = document.getString("firstName")
                     val lastName = document.getString("lastName")
 
-                    userProfile.value = User(firstName, lastName, user.email ?: "")
+                    userProfile.value = User(user.uid,firstName, lastName, user.email ?: "")
                 } else {
                     // Handle the case where the document doesn't exist
                 }

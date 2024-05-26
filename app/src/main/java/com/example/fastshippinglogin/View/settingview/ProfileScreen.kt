@@ -35,7 +35,7 @@ fun MainScreennn(user: FirebaseUser, onSignOut: () -> Unit) {
                     val firstName = document.getString("firstName")
                     val lastName = document.getString("lastName")
 
-                    userProfile.value = User(firstName, lastName, user.email ?: "")
+                    userProfile.value = User(user.uid,firstName, lastName, user.email ?: "")
                 } else {
                     // Handle the case where the document doesn't exist
                 }

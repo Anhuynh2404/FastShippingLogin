@@ -23,6 +23,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -32,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,8 +41,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.rememberImagePainter
 import com.example.fastshippinglogin.Model.Product
 import com.example.fastshippinglogin.R
+import com.example.fastshippinglogin.ui.theme.Poppins
+import com.example.fastshippinglogin.ui.theme.mainColorOrrange
+import com.example.fastshippinglogin.ui.theme.mainColorWhite
 import com.example.fastshippinglogin.viewmodel.cart.CartViewModel
 import com.example.fastshippinglogin.viewmodel.restaurant.RestaurantViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -63,7 +69,12 @@ fun ProductDetailScreen(navController: NavHostController, productId: String?, re
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Chi tiết sản phẩm") },
+                title = {
+                    Text(
+                        text = "Chi tiết sản phẩm",
+                        fontFamily = Poppins
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = {
                         navController.popBackStack()
@@ -71,11 +82,7 @@ fun ProductDetailScreen(navController: NavHostController, productId: String?, re
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Quay lại")
                     }
                 },
-                actions = {
-                    IconButton(onClick = { /* Handle favorite action */ }) {
-                        Icon(Icons.Filled.Favorite, contentDescription = "Yêu thích")
-                    }
-                }
+                backgroundColor = mainColorWhite
             )
         },
         bottomBar = {
@@ -109,38 +116,50 @@ fun ProductDetailScreen(navController: NavHostController, productId: String?, re
 fun ProductInfor(product: Product) {
     Column {
         Image(
-            painter = /*rememberImagePainter(data = product.imgProduct)*/painterResource(id = R.drawable.ic_launcher_background),
+          painter = rememberImagePainter(data = product.imgProduct),
             contentDescription = "Ảnh sản phẩm",
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
+                .height(200.dp),
+            contentScale = ContentScale.Crop
         )
 
-        // Tên sản phẩm
-        Text(
-            text = product.nameProduct,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(16.dp)
-        )
+        Row {
+            Text(
+                text = product.nameProduct,
+                fontSize = 22.sp,
+                fontFamily = Poppins,
+                modifier = Modifier.padding(top = 14.dp, start = 14 .dp).weight(1f),
+                color = Color.DarkGray
+            )
+            IconButton(onClick = { /* Handle favorite action */ },modifier = Modifier.padding(top = 5.dp, end = 15 .dp),) {
+                Row {
+                    Icon(Icons.Default.FavoriteBorder, contentDescription = "Yêu thích", tint = Color.Gray)
+                    //Text(text = "LIKE  8",modifier = Modifier.padding(start = 5 .dp, top = 2 .dp), color = Color.Gray)
+                }
+            }
 
-        // Giá tiền
+        }
         Text(
             text = "Giá: ${product.moneyProduct} VND",
-            fontSize = 20.sp,
-            color = Color.Red,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            fontSize = 18.sp,
+            color = mainColorOrrange,
+            modifier = Modifier.padding(horizontal = 14.dp),
         )
-
-        // Số sao và số đơn mua
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(top = 12.dp, start = 14 .dp),
         ) {
-            Icon(Icons.Filled.Star, contentDescription = "Star", tint = Color.Yellow)
+            Icon(Icons.Filled.Star, contentDescription = "Star", tint = mainColorOrrange)
             Text(text = "4.5", modifier = Modifier.padding(start = 4.dp))
             Spacer(modifier = Modifier.width(16.dp))
-            Text(text = "1000 đơn đã mua")
+            Text(text = "1000 đơn đã mua", color = Color.Gray)
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(top = 12.dp, start = 14 .dp),
+        ) {
+            Text(text = "Mô tả: 1000 đơn đã mua",modifier = Modifier.padding(start = 4.dp))
         }
     }
 }
@@ -154,7 +173,7 @@ fun BottomBar(id_product:String?,product: Product, userId: String, viewModel: Ca
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colors.primaryVariant)
+            .background(mainColorOrrange)
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically

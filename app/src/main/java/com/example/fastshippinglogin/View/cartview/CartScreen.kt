@@ -333,7 +333,7 @@ fun BottomBar(cartItems: List<CartItem>, products: Map<String, Product>, navCont
             verticalArrangement = Arrangement.Center
         ) {
             Button(
-                onClick = { navController.navigate("Order") },
+                onClick = { navController.navigate("OrderDetail") },
                 colors = ButtonDefaults.buttonColors(mainColorOrrange),
                 shape = RectangleShape
             ) {

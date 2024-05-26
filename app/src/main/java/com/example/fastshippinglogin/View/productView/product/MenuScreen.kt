@@ -25,6 +25,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -45,7 +47,6 @@ fun MenuScreen(navController: NavHostController ,restaurantId: String, restauran
     val products by restaurantViewModel.products.collectAsState()
     val categories by restaurantViewModel.categories.collectAsState()
 
-    // Group products by category
     val groupedProducts = products.groupBy { it.id_Category }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -54,7 +55,7 @@ fun MenuScreen(navController: NavHostController ,restaurantId: String, restauran
             Text(
                 text = categoryName,
                 style = MaterialTheme.typography.h6,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(14.dp)
             )
             products.forEach { product ->
                 ProductItem(navController, product = product)
@@ -68,9 +69,10 @@ fun ProductItem(navController: NavHostController, product: Product) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(6.dp)
             .clickable { navController.navigate("productDetail/${product.id}") }, // Navigate to product detail screen
-        elevation = 4.dp
+        elevation = 4.dp,
+        shape = RectangleShape
     ) {
         Row(modifier = Modifier.padding(16.dp)) {
             Image(
@@ -79,7 +81,8 @@ fun ProductItem(navController: NavHostController, product: Product) {
                 modifier = Modifier
                     .size(64.dp)
                     .clip(CircleShape)
-                    .background(Color.Gray)
+                    .background(Color.Gray),
+                contentScale = ContentScale.Crop
             )
 
             Spacer(modifier = Modifier.width(16.dp))

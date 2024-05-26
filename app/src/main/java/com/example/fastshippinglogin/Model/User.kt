@@ -1,6 +1,7 @@
 package com.example.fastshippinglogin.Model
 
 data class User(
+    val id : String,
     val firstName: String?,
     val lastName: String?,
     val emailUser: String,
@@ -8,5 +9,5 @@ data class User(
     val address: String? = null,
     val imageUrl: String? = null
 ) {
-    constructor(): this("", "", "", "", "", "")
+    constructor(): this("","", "", "", "", "", "")
 }

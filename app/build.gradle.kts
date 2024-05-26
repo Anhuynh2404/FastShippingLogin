@@ -88,6 +88,8 @@ dependencies {
     implementation ("androidx.compose.runtime:runtime-livedata:1.4.3")
 
     implementation ("androidx.appcompat:appcompat:1.3.1")
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.15.0")
+    implementation ("com.google.accompanist:accompanist-permissions:0.20.3")
 
 
 

@@ -33,6 +33,7 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -58,6 +60,7 @@ import com.example.fastshippinglogin.ui.theme.Poppins
 import com.example.fastshippinglogin.ui.theme.PrimaryColor
 import com.example.fastshippinglogin.ui.theme.Purple700
 import com.example.fastshippinglogin.ui.theme.SecondaryColor
+import com.example.fastshippinglogin.viewmodel.account.AccountViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -69,15 +72,19 @@ import kotlinx.coroutines.launch
 fun ProfileHome(
     navController: NavHostController = rememberNavController(),
     user: User,
+    accountViewModel: AccountViewModel = viewModel()
 ){
+    val currentUser = FirebaseAuth.getInstance().currentUser
     val eUser by remember { mutableStateOf(user) }
-    val backStackEntry by navController.currentBackStackEntryAsState()
     val firstN = eUser.firstName
     val lastN = eUser.lastName
     val address = eUser.address
-//    val currentScreen = CupcakeScreen.valueOf(
-//        backStackEntry?.destination?.route ?: CupcakeScreen.Start.name
-//    )
+
+    LaunchedEffect(currentUser) {
+        currentUser?.uid?.let { userId ->
+            accountViewModel.loadUser()
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -106,7 +113,7 @@ fun ProfileHome(
         ) {
             ProfileHeader(firstN.toString(),lastN.toString(), address.toString())
             Spacer(modifier = Modifier.height(30 .dp))
-            ProfileOption(navController = navController)
+            ProfileOption(navController = navController, accountViewModel)
         }
     }
 }
@@ -230,7 +237,8 @@ fun ProfileTab(
 @ExperimentalMaterialApi
 @Composable
 private fun ProfileOption(
-    navController: NavHostController
+    navController: NavHostController,
+    accountViewModel: AccountViewModel
 ) {
     val auth: FirebaseAuth by lazy { Firebase.auth }
     var user by remember { mutableStateOf(auth.currentUser) }
@@ -269,11 +277,8 @@ private fun ProfileOption(
         Spacer(modifier = Modifier.height(30 .dp))
         Button(
             onClick = {
-                coroutineScope.launch {
-                    auth.signOut()
-                    user = null
-                    navController.navigate("Logout")
-                }
+                accountViewModel.signOut()
+                navController.navigate("Logout")
             },
             modifier = Modifier.fillMaxWidth()
         ) {

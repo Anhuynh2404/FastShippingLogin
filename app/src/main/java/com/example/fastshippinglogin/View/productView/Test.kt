@@ -18,48 +18,40 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.fastshippinglogin.Model.Restaurant
-import com.example.fastshippinglogin.R
 import com.example.fastshippinglogin.View.productView.product.MenuScreen
-import com.example.fastshippinglogin.ui.theme.Poppins
-import com.example.fastshippinglogin.ui.theme.mainColorOrrange
 import com.example.fastshippinglogin.ui.theme.mainColorWhite
 import com.example.fastshippinglogin.viewmodel.restaurant.RestaurantViewModel
+import kotlin.math.log
+import com.example.fastshippinglogin.R
+import com.example.fastshippinglogin.ui.theme.Poppins
+import com.example.fastshippinglogin.ui.theme.mainColorOrrange
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.log
 
 
 @Composable
-fun RestaurantDetailScreen(
-    navController: NavHostController,
-    resID : String,
-    restaurantViewModel: RestaurantViewModel = viewModel()
+fun RestaurantDetailScreenT(
+
 ) {
-    LaunchedEffect(resID) {
-        restaurantViewModel.getRestaurantById(resID)
-    }
-
-    val restaurant by restaurantViewModel.restaurant.collectAsState()
-
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(text = "Chi tiết nhà hàng") },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navController.popBackStack()
                     }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Quay lại")
                     }
                 },
                 actions = {
                     IconButton(onClick = { /* Handle favorite action */ }) {
-                        Icon(Icons.Filled.Favorite, contentDescription = "Yêu thích")
+                        Icon(Icons.Default.FavoriteBorder, contentDescription = "Yêu thích")
                     }
                     IconButton(onClick = { /* Handle share action */ }) {
                         Icon(Icons.Filled.Share, contentDescription = "Chia sẻ")
@@ -75,25 +67,21 @@ fun RestaurantDetailScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            ImageSlider()
-
-            restaurant?.let {
-                RestaurantInfo(it)
-            } ?: run {
-                Text(text = "Loading...", modifier = Modifier.padding(16.dp))
-            }
+            ImageSliderT()
+            // Thông tin nhà hàng
+            RestaurantInfoT()
             Spacer(modifier = Modifier.height(8.dp))
             // Các nút chức năng
-            FunctionButtons()
+            FunctionButtonsT()
             Spacer(modifier = Modifier.height(8.dp))
             // TabRow
-            RestaurantTabRow(navController,resID)
+            RestaurantTabRowT()
         }
     }
 }
 
 @Composable
-fun ImageSlider() {
+fun ImageSliderT() {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -127,13 +115,14 @@ fun ImageSlider() {
     }
 }
 
+
 @Composable
-fun RestaurantInfo(restaurant: Restaurant?) {
+fun RestaurantInfoT() {
     Column(
         modifier = Modifier.padding(horizontal = 16.dp)
     ) {
         Text(
-            text = restaurant!!.nameRestaurant,
+            text = "nameRestaurant",
             fontSize = 24.sp,
             fontFamily = Poppins
         )
@@ -142,31 +131,31 @@ fun RestaurantInfo(restaurant: Restaurant?) {
             Text(text = "4.5", modifier = Modifier.padding(start = 4.dp))
             Text(text = "(50 lượt đánh giá)", modifier = Modifier.padding(start = 4.dp), color = Color.Gray)
         }
-        Text(text = "Địa chỉ: ${restaurant.addressRestaurant}", modifier = Modifier.padding(vertical = 4.dp), fontSize = 16 .sp)
+        Text(text = "Địa chỉ: {restaurant.addressRestaurant}", modifier = Modifier.padding(vertical = 4.dp), fontSize = 16 .sp)
         Text(text = "Giờ giao hàng:  AM -  PM", modifier = Modifier.padding(vertical = 4.dp), fontSize = 16 .sp)
         Text(text = "Phương thức thanh toán: ", modifier = Modifier.padding(vertical = 4.dp), fontSize = 16 .sp)
-        Text(text = "Mô tả: ${restaurant.descriptionRestaurant.orEmpty()} ", modifier = Modifier.padding(vertical = 4.dp), fontSize = 16 .sp)
+        Text(text = "Mô tả: {restaurant.descriptionRestaurant.orEmpty()} ", modifier = Modifier.padding(vertical = 4.dp), fontSize = 16 .sp)
     }
 }
 
 @Composable
-fun FunctionButtons() {
+fun FunctionButtonsT() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        ActionButton(icon = Icons.Default.Email, text = "Phản hồi", onClick = { /* Tư vấn */ })
-        ActionButton(icon = Icons.Default.Call, text = "Liên hệ", onClick = { /* Gọi điện */ })
-        ActionButton(icon = Icons.Default.Create, text = "Đánh giá", onClick = { /* Gọi Grab */ })
-        ActionButton(icon = Icons.Default.Place, text = "Vị trí", onClick = { /* In hình */ })
+        ActionButtonT(icon = Icons.Default.Email, text = "Phản hồi", onClick = { /* Tư vấn */ })
+        ActionButtonT(icon = Icons.Default.Call, text = "Liên hệ", onClick = { /* Gọi điện */ })
+        ActionButtonT(icon = Icons.Default.Create, text = "Đánh giá", onClick = { /* Gọi Grab */ })
+        ActionButtonT(icon = Icons.Default.Place, text = "Vị trí", onClick = { /* In hình */ })
 
     }
 }
 
 @Composable
-fun ActionButton(icon: ImageVector, text: String, onClick: () -> Unit) {
+fun ActionButtonT(icon: ImageVector, text: String, onClick: () -> Unit) {
     IconButton(onClick = onClick) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -179,9 +168,7 @@ fun ActionButton(icon: ImageVector, text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun RestaurantTabRow(
-    navController: NavHostController,
-    id :String
+fun RestaurantTabRowT(
 ) {
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf("Menu", "Thông tin", "Hình ảnh", "Review")
@@ -193,7 +180,7 @@ fun RestaurantTabRow(
         ) {
             tabs.forEachIndexed { index, tab ->
                 Tab(
-                    text = { Text(tab) },
+                    text = { Text(tab, color = mainColorWhite) },
                     selected = selectedTabIndex == index,
                     onClick = { selectedTabIndex = index }
                 )
@@ -201,10 +188,7 @@ fun RestaurantTabRow(
         }
         Box(modifier = Modifier.fillMaxSize()) {
             when (selectedTabIndex) {
-                0 -> MenuScreen(navController , restaurantId = id)
-                1 -> InfoContent()
-                2 -> ImagesContent()
-                3 -> ReviewContent()
+
             }
         }
     }
@@ -212,23 +196,10 @@ fun RestaurantTabRow(
 
 
 
-@Composable
-fun InfoContent() {
-    Text(text = "Thông tin content")
-}
 
-@Composable
-fun ImagesContent() {
-    Text(text = "Hình ảnh content")
-}
 
+@Preview(showBackground = true)
 @Composable
-fun ReviewContent() {
-    Text(text = "Review content")
+fun DefaultPreview() {
+    RestaurantDetailScreenT()
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun DefaultPreview() {
-//    RestaurantDetailScreen()
-//}

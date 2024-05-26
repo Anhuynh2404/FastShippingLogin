@@ -371,7 +371,7 @@ private fun BottomBar(navController: NavHostController ,cartViewModel: CartViewM
                 val shippingFee = cartViewModel.getShippingFee()
                 val discount = cartViewModel.getDiscount()
                 val totalPaymentAmount = totalOrderAmount + shippingFee - discount
-                val statusOrder = "Chưa xác nhận"
+                val statusOrder = "Chờ xác nhận"
                 val paymentMethod = cartViewModel.getPaymentMethod()
                 val phone = cartViewModel.getPhone()
 

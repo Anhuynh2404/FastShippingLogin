@@ -22,12 +22,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.lightColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,8 +30,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,8 +41,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.fastshippinglogin.Model.User
 import com.example.fastshippinglogin.ui.theme.Poppins
@@ -57,15 +48,9 @@ import com.example.fastshippinglogin.ui.theme.PrimaryColor
 import com.example.fastshippinglogin.ui.theme.SecondaryColor
 import com.example.fastshippinglogin.ui.theme.Shapes
 import com.example.fastshippinglogin.R
-import com.example.fastshippinglogin.View.components.OrderTab
-import com.example.fastshippinglogin.View.settingview.account.EditProfileScreen
 import com.example.fastshippinglogin.ui.theme.LightPrimaryColor
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.launch
 
 
 @ExperimentalMaterialApi
@@ -400,7 +385,7 @@ fun MainScreen(user: FirebaseUser?, onSignOut: () -> Unit) {
                         val firstName = document.getString("firstName")
                         val lastName = document.getString("lastName")
 
-                        userProfile.value = User(firstName, lastName, user.email ?: "")
+                        userProfile.value = User(user.uid,firstName, lastName, user.email ?: "")
                     } else {
                         // Handle the case where the document doesn't exist
                     }

@@ -11,7 +11,9 @@ data class Order(
     val address: String,
     val phone: String,
     val paymentMethod: String
-)
+){
+    constructor() : this("", emptyList(), 0, 0, 0, 0, "", "","","")
+}
 
 data class OrderItem(
     val productId: String,

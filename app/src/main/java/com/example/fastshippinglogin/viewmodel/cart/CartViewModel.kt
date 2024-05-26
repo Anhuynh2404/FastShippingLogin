@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.fastshippinglogin.Model.CartItem
 import com.example.fastshippinglogin.Model.Order
+import com.example.fastshippinglogin.Model.OrderItem
 import com.example.fastshippinglogin.Model.Product
 import com.example.fastshippinglogin.data.PaymentMethod
 import com.google.firebase.auth.FirebaseAuth
@@ -22,6 +23,9 @@ class CartViewModel : ViewModel() {
 
     private val _products = MutableLiveData<Map<String, Product>>()
     val products: LiveData<Map<String, Product>> = _products
+
+    private var selectedPaymentMethod: String = PaymentMethod.CASH.toString()
+    private var selectedPhone: String = ""
 
 
     init {
@@ -84,40 +88,7 @@ class CartViewModel : ViewModel() {
         }
     }
 
-//    fun addToCart(productId:String,userId: String, product: Product, quantity: Int) {
-//        val cartRef = db.collection("carts").document(userId).collection("items")
-//
-//        cartRef.whereEqualTo("productId", productId).get()
-//            .addOnSuccessListener { documents ->
-//                if (!documents.isEmpty) {
-//                    // Sản phẩm đã tồn tại trong giỏ hàng, cập nhật số lượng
-//                    for (document in documents) {
-//                        val existingItem = document.toObject(CartItem::class.java)
-//                        val newQuantity = existingItem.quantity + quantity
-//                        cartRef.document(document.id).update("quantity", newQuantity)
-//                            .addOnSuccessListener {
-//                                Log.d("CartViewModel", "Item quantity updated in cart")
-//                            }
-//                            .addOnFailureListener { e ->
-//                                Log.e("CartViewModel", "Error updating item quantity in cart", e)
-//                            }
-//                    }
-//                } else {
-//                    // Sản phẩm chưa tồn tại trong giỏ hàng, thêm mới
-//                    val cartItem = CartItem(userId, productId, quantity)
-//                    cartRef.add(cartItem)
-//                        .addOnSuccessListener {
-//                            Log.d("CartViewModel", "Item added to cart")
-//                        }
-//                        .addOnFailureListener { e ->
-//                            Log.e("CartViewModel", "Error adding item to cart", e)
-//                        }
-//                }
-//            }
-//            .addOnFailureListener { e ->
-//                Log.e("CartViewModel", "Error checking item in cart", e)
-//            }
-//    }
+
     fun addToCart(productId: String, userId: String, product: Product, quantity: Int, onFailure: (String) -> Unit) {
         val cartRef = db.collection("carts").document(userId).collection("items")
 
@@ -290,9 +261,39 @@ class CartViewModel : ViewModel() {
                 onFailure(e)
             }
     }
-    private var selectedPaymentMethod: String = PaymentMethod.CASH.toString()
-    private var selectedPhone: String = ""
 
+    fun getOrderbyStatus(userId: String, statusOrder: String, onSuccess: (List<Order>) -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection("orders")
+            .whereEqualTo("userId", userId)
+            .whereEqualTo("statusOrder", statusOrder)
+            .get()
+            .addOnSuccessListener { documents ->
+                val orders = documents.map { document ->
+                    Order(
+                        userId = document.getString("userId")!!,
+                        items = (document.get("items") as List<Map<String, Any>>).map { item ->
+                            OrderItem(
+                                productId = item["productId"] as String,
+                                quantity = (item["quantity"] as Long).toInt(),
+                                price = (item["price"] as Long).toInt()
+                            )
+                        },
+                        totalOrderAmount = (document.getLong("totalOrderAmount") ?: 0L).toInt(),
+                        shippingFee = (document.getLong("shippingFee") ?: 0L).toInt(),
+                        discount = (document.getLong("discount") ?: 0L).toInt(),
+                        totalPaymentAmount = (document.getLong("totalPaymentAmount") ?: 0L).toInt(),
+                        statusOrder = document.getString("statusOrder")!!,
+                        address = document.getString("address")!!,
+                        phone = document.getString("phone")!!,
+                        paymentMethod = document.getString("paymentMethod")!!
+                    )
+                }
+                onSuccess(orders)
+            }
+            .addOnFailureListener { e ->
+                onFailure(e)
+            }
+    }
     fun getShippingFee(): Int {
         return 20000
     }
